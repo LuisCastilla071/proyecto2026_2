@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Encabezado from "./assets/components/navegacion/Encabezado.jsx";
+import Encabezado from "./components/navegacion/Encabezado.jsx";
 
 import Inicio from "./views/Inicio";
 import Categorias from "./views/Categorias";
 import Catalogo from "./views/Catalogo";
 import Productos from "./views/Productos";
 import Login from "./views/Login";
-import RutaProtegida from "./components/rutas/RutaProtegida";
+import RutaProtegida from "./components/rutas/RutaProtegida.jsx";
 import Pagina404 from "./views/Pagina404";
 
 import "./App.css";

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
-const Inicio = () => {
+const Login = () => {
   return (
     <Container className="mt-3">
       <Row className="align-items-center">
         <Col>
-          <h2>
-            <i className="bi-house-fill me-2"></i> Inicio
+          <h2 className="text-white">
+            <i className="bi-house-fill me-2"></i> 
+            Login
           </h2>
         </Col>
       </Row>
@@ -15,4 +16,4 @@ const Inicio = () => {
   );
 };
 
-export default Inicio;
+export default Login;
