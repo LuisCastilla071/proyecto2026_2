@@ -1,9 +1,20 @@
-// ... todo tu código de validación de sesión (Supabase / localStorage)
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RutaProtegida = ({ children }) => {
-  // tu lógica aquí
-  return children; 
+  const navegar = useNavigate();
+
+  useEffect(() => {
+    const usuarioGuardado = localStorage.getItem("usuario-supabase");
+
+    // Si NO hay usuario guardado → redirige directo a login
+    if (!usuarioGuardado) {
+      navegar("/login", { replace: true });
+    }
+  }, [navegar]);
+
+  // Si está logueado, muestra la página normalmente
+  return <>{children}</>;
 };
 
-// AGREGA ESTO AL FINAL:
 export default RutaProtegida;
