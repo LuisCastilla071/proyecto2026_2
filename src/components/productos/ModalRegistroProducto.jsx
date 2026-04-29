@@ -10,10 +10,8 @@ const ModalRegistroProducto = ({
   agregarProducto,
   categorias,
 }) => {
-  // Estado para manejar el bloqueo del botón durante la carga
   const [deshabilitado, setDeshabilitado] = useState(false);
 
-  // Función para manejar la acción de guardar
   const handleAgregar = async () => {
     if (deshabilitado) return;
     setDeshabilitado(true);
@@ -36,7 +34,6 @@ const ModalRegistroProducto = ({
       <Modal.Body>
         <Form>
           <Row>
-            {/* Categoría */}
             <Col xs={12} md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Categoría *</Form.Label>
@@ -56,7 +53,6 @@ const ModalRegistroProducto = ({
               </Form.Group>
             </Col>
 
-            {/* Nombre del Producto */}
             <Col xs={12} md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Nombre *</Form.Label>
@@ -71,7 +67,6 @@ const ModalRegistroProducto = ({
               </Form.Group>
             </Col>
 
-            {/* Precio de Venta */}
             <Col xs={12}>
               <Form.Group className="mb-3">
                 <Form.Label>Precio de venta *</Form.Label>
@@ -88,7 +83,6 @@ const ModalRegistroProducto = ({
               </Form.Group>
             </Col>
 
-            {/* Imagen del Producto */}
             <Col xs={12}>
               <Form.Group className="mb-3">
                 <Form.Label>Imagen del producto *</Form.Label>
@@ -101,7 +95,6 @@ const ModalRegistroProducto = ({
               </Form.Group>
             </Col>
 
-            {/* Descripción */}
             <Col xs={12}>
               <Form.Group className="mb-3">
                 <Form.Label>Descripción</Form.Label>
@@ -123,12 +116,8 @@ const ModalRegistroProducto = ({
         <Button variant="secondary" onClick={() => setMostrarModal(false)}>
           Cancelar
         </Button>
-        <Button
-          variant="primary"
-          onClick={handleAgregar}
-          disabled={deshabilitado}
-        >
-          {deshabilitado ? "Guardando..." : "Guardar"}
+        <Button variant="primary" onClick={handleAgregar} disabled={deshabilitado}>
+          Guardar
         </Button>
       </Modal.Footer>
     </Modal>
