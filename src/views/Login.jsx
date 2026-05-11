@@ -1,8 +1,3 @@
-// ================================================
-// 2. Vista: Login.jsx (o pages/Login.jsx)
-// (Crea este archivo en: src/views/Login.jsx o src/pages/Login.jsx)
-// ================================================
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormularioLogin from "../components/login/FormularioLogin";   // ← Ajusta la ruta según tu carpeta

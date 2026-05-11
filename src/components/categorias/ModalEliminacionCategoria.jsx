@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const ModalEliminacionCategoria = ({
+const ModalEliminacionCliente = ({
   mostrarModalEliminacion,
   setMostrarModalEliminacion,
-  eliminarCategoria,
-  categoria,
+  eliminarCliente,
+  cliente,
 }) => {
-  // --- Lógica de Estado (Imagen 6551da) ---
+  // --- Lógica de Estado ---
   const [deshabilitado, setDeshabilitado] = useState(false);
 
   const handleEliminar = async () => {
     if (deshabilitado) return;
     setDeshabilitado(true);
-    await eliminarCategoria();
+    await eliminarCliente();
     setDeshabilitado(false);
   };
 
-  // --- Renderizado del Modal (Imagen 6551de) ---
+  // --- Renderizado del Modal ---
   return (
     <Modal
       show={mostrarModalEliminacion}
@@ -31,7 +31,7 @@ const ModalEliminacionCategoria = ({
       </Modal.Header>
 
       <Modal.Body>
-        ¿Estás seguro de que deseas eliminar la categoría "<strong>{categoria?.nombre_categoria}</strong>"?
+        ¿Estás seguro de que deseas eliminar al cliente "<strong>{cliente?.nombre_cliente} {cliente?.apellido_cliente}</strong>"?
       </Modal.Body>
 
       <Modal.Footer>
@@ -46,11 +46,11 @@ const ModalEliminacionCategoria = ({
           onClick={handleEliminar}
           disabled={deshabilitado}
         >
-          Eliminar
+          {deshabilitado ? "Eliminando..." : "Eliminar"}
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default ModalEliminacionCategoria;
+export default ModalEliminacionCliente;
