@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar, Offcanvas } from "react-bootstrap";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo2.png";
 import { supabase } from "../../database/supabaseconfig";
 
 const Encabezado = () => {
@@ -161,8 +161,8 @@ const Encabezado = () => {
           style={{ cursor: "pointer" }}
         >
           <img
-            alt=""
-            src={logo}
+            alt="Logo Discosa"
+            src={logo} // Aquí se usa la variable que importaste arriba
             width="45"
             height="45"
             className="d-inline-block me-2"
