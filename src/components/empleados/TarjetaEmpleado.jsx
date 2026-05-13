@@ -5,9 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 const TarjetaEmpleado = ({
   empleados,
   abrirModalEdicion,
-  abrirModalEliminacion
 }) => {
-
   const [cargando, setCargando] = useState(true);
   const [idTarjetaActiva, setIdTarjetaActiva] = useState(null);
 
@@ -43,7 +41,7 @@ const TarjetaEmpleado = ({
             return (
               <Card
                 key={empleado.id_empleado}
-                className="mb-3 border-0 rounded-3 shadow-sm w-100 tarjeta-categoria-contenedor"
+                className="mb-3 border-0 rounded-3 shadow-sm w-100 tarjeta-empleado-contenedor"
                 onClick={() => alternarTarjetaActiva(empleado.id_empleado)}
                 tabIndex={0}
                 onKeyDown={(evento) => {
@@ -52,37 +50,46 @@ const TarjetaEmpleado = ({
                     alternarTarjetaActiva(empleado.id_empleado);
                   }
                 }}
-                aria-label={`Empleado ${empleado.nombre_empleado}`}
+                aria-label={`Empleado ${empleado.nombre_empleado} ${empleado.apellido_empleado}`}
               >
                 <Card.Body
-                  className={`p-2 tarjeta-categoria-cuerpo ${tarjetaActiva
-                      ? "tarjeta-categoria-cuerpo-activo"
-                      : "tarjeta-categoria-cuerpo-inactivo"
-                    }`}
+                  className={`p-2 tarjeta-empleado-cuerpo ${
+                    tarjetaActiva
+                      ? "tarjeta-empleado-cuerpo-activo"
+                      : "tarjeta-empleado-cuerpo-inactivo"
+                  }`}
                 >
                   <Row className="align-items-center gx-3">
-                    <Col xs={2} className="px-2">
+                    <Col xs="auto" className="px-2">
                       <div
-                        className="bg-light d-flex align-items-center justify-content-center rounded tarjeta-categoria-placeholder-imagen"
+                        className="bg-light d-flex align-items-center justify-content-center rounded tarjeta-empleado-placeholder-imagen"
+                        style={{ width: "60px", height: "60px" }}
                       >
-                        <i className="bi bi-person-badge text-muted fs-3"></i>
+                        <i className="bi bi-person text-muted fs-3"></i>
                       </div>
                     </Col>
 
-                    <Col xs={5} className="text-start">
+                    <Col className="text-start">
                       <div className="fw-semibold text-truncate">
                         {empleado.nombre_empleado} {empleado.apellido_empleado}
                       </div>
-                      <div className="small text-muted text-truncate">
-                        {empleado.tipo_empleado}
+                      <div className="small text-muted">
+                        {empleado.email}
+                      </div>
+                      <div className="small text-muted">
+                        Celular: {empleado.celular || "-"}
                       </div>
                     </Col>
 
                     <Col
-                      xs={5}
+                      xs="auto"
                       className="d-flex flex-column align-items-end justify-content-center text-end"
                     >
-                      <div className="fw-semibold small text-primary">Activo</div>
+                      <div className="text-muted small">
+                        {empleado.tipo_empleado}
+                      </div>
+                      <div className="fw-bold text-dark">{empleado.pin || "-"}</div>
+                      <div className="fw-semibold small">Activo</div>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -95,10 +102,10 @@ const TarjetaEmpleado = ({
                       e.stopPropagation();
                       setIdTarjetaActiva(null);
                     }}
-                    className="tarjeta-categoria-capa"
+                    className="tarjeta-empleado-capa"
                   >
                     <div
-                      className="d-flex gap-2 tarjeta-categoria-botones-capa"
+                      className="d-flex gap-2 tarjeta-empleado-botones-capa"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Button
@@ -108,19 +115,9 @@ const TarjetaEmpleado = ({
                           abrirModalEdicion(empleado);
                           setIdTarjetaActiva(null);
                         }}
+                        aria-label={`Editar ${empleado.nombre_empleado} ${empleado.apellido_empleado}`}
                       >
                         <i className="bi bi-pencil"></i>
-                      </Button>
-
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => {
-                          abrirModalEliminacion(empleado);
-                          setIdTarjetaActiva(null);
-                        }}
-                      >
-                        <i className="bi bi-trash"></i>
                       </Button>
                     </div>
                   </div>

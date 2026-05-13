@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Table, Spinner, Button } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-const TablaEmpleados = ({
+const TablaEmpleados = ({ 
   empleados,
-  abrirModalEdicion,
-  abrirModalEliminacion
+  abrirModalEdicion 
 }) => {
   const [loading, setLoading] = useState(true);
 
@@ -31,18 +30,24 @@ const TablaEmpleados = ({
               <th>ID</th>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th className="d-none d-md-table-cell">Cargo</th>
+              <th>Email</th>
+              <th className="d-none d-md-table-cell">Celular</th>
+              <th className="d-none d-md-table-cell">PIN</th>
+              <th className="d-none d-md-table-cell">Rol</th>
               <th className="text-center">Acciones</th>
             </tr>
-          </thead>
+          </thead> 
           <tbody>
             {empleados.map((empleado) => (
-              <tr key={empleado.id_empleado}>
+              <tr key={empleado.id_empleado} className="align-middle">
                 <td>{empleado.id_empleado}</td>
                 <td>{empleado.nombre_empleado}</td>
                 <td>{empleado.apellido_empleado}</td>
+                <td>{empleado.email}</td>
+                <td className="d-none d-md-table-cell">{empleado.celular || "-"}</td>
+                <td className="d-none d-md-table-cell">{empleado.pin || "-"}</td>
                 <td className="d-none d-md-table-cell">
-                  {empleado.tipo_empleado}
+                  <span className="badge bg-primary">{empleado.tipo_empleado}</span>
                 </td>
                 <td className="text-center">
                   <Button
@@ -52,14 +57,6 @@ const TablaEmpleados = ({
                     onClick={() => abrirModalEdicion(empleado)}
                   >
                     <i className="bi bi-pencil"></i>
-                  </Button>
-
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => abrirModalEliminacion(empleado)}
-                  >
-                    <i className="bi bi-trash"></i>
                   </Button>
                 </td>
               </tr>
