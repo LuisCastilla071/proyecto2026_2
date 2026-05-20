@@ -117,7 +117,6 @@ const ModalRegistroEmpleado = ({
               <option value="administrador">Administrador</option>
               <option value="cajero">Cajero</option>
               <option value="mesero">Mesero</option>
-              <option value="chef">Chef / Cocinero</option>
             </Form.Select>
           </Form.Group>
         </Form>
