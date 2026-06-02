@@ -5,11 +5,13 @@ import logo from "../../assets/logo.png";
 import { supabase } from "../../database/supabaseconfig";
 // Importar el hook de autenticación
 import { useAuth } from "../../context/AuthContext";
+import ChatIA from "../ia/ChatIA";
 
 const Encabezado = () => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Para detectar la ruta actual
+  const [mostrarChatIA, setMostrarChatIA] = useState(false);
 
   // Desestructurar la lógica para verificar permisos, cierre de sesión y usuario autenticado
   const { tienePermiso, logout, usuario } = useAuth();
@@ -152,6 +154,11 @@ const Encabezado = () => {
             </Nav.Link>
           )}
 
+          <Nav.Link onClick={() => setMostrarChatIA(true)} className="text-white">
+            <i className="bi bi-robot me-2"></i>
+          </Nav.Link>
+
+
           <hr />
 
           {/* Ícono cerrar sesión en barra superior */}
@@ -191,6 +198,7 @@ const Encabezado = () => {
   return (
     <Navbar expand="md" fixed="top" className="color-navbar shadow-lg" variant="dark">
       <Container>
+        <ChatIA mostrar={mostrarChatIA} onCerrar={() => setMostrarChatIA(false)} />
         <Navbar.Brand
           onClick={() => manejarNavegacion(esCatalogo ? "/catalogo" : "/")}
           className="text-black fw-bold d-flex align-items-center"
