@@ -56,8 +56,8 @@ const TarjetaCategoria = ({
               >
                 <Card.Body
                   className={`p-2 tarjeta-categoria-cuerpo ${tarjetaActiva
-                      ? "tarjeta-categoria-cuerpo-activo"
-                      : "tarjeta-categoria-cuerpo-inactivo"
+                    ? "tarjeta-categoria-cuerpo-activo"
+                    : "tarjeta-categoria-cuerpo-inactivo"
                     }`}
                 >
                   <Row className="align-items-center gx-3">
@@ -124,6 +124,17 @@ const TarjetaCategoria = ({
                       >
                         <i className="bi bi-trash"></i>
                       </Button>
+
+                      <Button
+                        variant="outline-success"
+                        size="sm"
+                        className="m-1"
+                        onClick={() => copiarCategoria(categoria)}
+                        title="Copiar al portapapeles"
+                      >
+                        <i className="bi bi-clipboard"></i>
+                      </Button>
+
                     </div>
                   </div>
                 )}

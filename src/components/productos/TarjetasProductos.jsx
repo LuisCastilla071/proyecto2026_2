@@ -5,7 +5,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 const TarjetaProducto = ({
   productos,
   abrirModalEdicion,
-  abrirModalEliminacion
+  abrirModalEliminacion,
+  generarQRImagen
 }) => {
   const [cargando, setCargando] = useState(true);
   const [idTarjetaActiva, setIdTarjetaActiva] = useState(null);
@@ -59,11 +60,10 @@ const TarjetaProducto = ({
                 aria-label={`Producto ${producto.nombre_producto}`}
               >
                 <Card.Body
-                  className={`p-2 tarjeta-categoria-cuerpo ${
-                    tarjetaActiva
+                  className={`p-2 tarjeta-categoria-cuerpo ${tarjetaActiva
                       ? "tarjeta-categoria-cuerpo-activo"
                       : "tarjeta-categoria-cuerpo-inactivo"
-                  }`}
+                    }`}
                 >
                   <Row className="align-items-center gx-3">
                     <Col xs={3} sm={2} className="px-2">
@@ -133,6 +133,19 @@ const TarjetaProducto = ({
                       >
                         <i className="bi bi-trash"></i>
                       </Button>
+
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => {
+                          generarQRImagen(producto);
+                          if (typeof setIdTarjetaActiva === 'function') setIdTarjetaActiva(null);
+                        }}
+                        title="Generar código QR de la imagen"
+                      >
+                        <i className="bi bi-qr-code"></i>
+                      </Button>
+
                     </div>
                   </div>
                 )}

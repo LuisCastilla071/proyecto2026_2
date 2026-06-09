@@ -8,8 +8,8 @@ import TablaProductos from "../components/productos/TablaProductos";
 import TarjetaProducto from "../components/productos/TarjetasProductos";
 import Paginacion from "../components/ordenamiento/Paginacion";
 import ModalEdicionProducto from "../components/productos/ModalEdicionProducto";
-// Importación del componente de eliminación
 import ModalEliminacionProducto from "../components/productos/ModalEliminacionProducto";
+import ModalQRProducto from "../components/productos/ModalQRProducto";
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
@@ -21,6 +21,9 @@ const Productos = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+
+  const [mostrarModalQR, setMostrarModalQR] = useState(false);
+  const [productoQR, setProductoQR] = useState(null);
 
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre_producto: "",
@@ -206,7 +209,7 @@ const Productos = () => {
 
         if (productoEditar.url_imagen) {
           const nombreAnterior = productoEditar.url_imagen.split("/").pop().split("?")[0];
-          await supabase.storage.from("imagenes_productos").remove([nombreAnterior]).catch(() => {});
+          await supabase.storage.from("imagenes_productos").remove([nombreAnterior]).catch(() => { });
         }
       }
 
@@ -224,7 +227,6 @@ const Productos = () => {
     }
   };
 
-  // --- Función Eliminar Producto ---
   const eliminarProducto = async () => {
     if (!productoAEliminar) return;
     try {
@@ -233,7 +235,7 @@ const Productos = () => {
       // 1. Eliminar imagen de Storage si existe
       if (productoAEliminar.url_imagen) {
         const nombreArchivo = productoAEliminar.url_imagen.split("/").pop().split("?")[0];
-        await supabase.storage.from("imagenes_productos").remove([nombreArchivo]).catch(() => {});
+        await supabase.storage.from("imagenes_productos").remove([nombreArchivo]).catch(() => { });
       }
 
       // 2. Eliminar registro de la base de datos
@@ -281,6 +283,20 @@ const Productos = () => {
     paginaActual * registrosPorPagina
   );
 
+  const generarQRImagen = (producto) => {
+    if (!producto?.url_imagen) {
+      setToast({
+        mostrar: true,
+        mensaje: "Este producto no tiene imagen asociada",
+        tipo: "advertencia",
+      });
+      return;
+    }
+
+    setProductoQR(producto);
+    setMostrarModalQR(true);
+  };
+
   return (
     <Container className="mt-3">
       <Row className="align-items-center mb-3">
@@ -316,6 +332,7 @@ const Productos = () => {
               productos={productosPaginados}
               abrirModalEdicion={(p) => { setProductoEditar(p); setMostrarModalEdicion(true); }}
               abrirModalEliminacion={(p) => { setProductoAEliminar(p); setMostrarModalEliminacion(true); }}
+              generarQRImagen={generarQRImagen}
             />
           </Col>
           <Col lg={12} className="d-none d-lg-block">
@@ -323,6 +340,7 @@ const Productos = () => {
               productos={productosPaginados}
               abrirModalEdicion={(p) => { setProductoEditar(p); setMostrarModalEdicion(true); }}
               abrirModalEliminacion={(p) => { setProductoAEliminar(p); setMostrarModalEliminacion(true); }}
+              generarQRImagen={generarQRImagen}
             />
           </Col>
         </Row>
@@ -364,6 +382,12 @@ const Productos = () => {
         setMostrarModalEliminacion={setMostrarModalEliminacion}
         eliminarProducto={eliminarProducto}
         producto={productoAEliminar}
+      />
+
+      <ModalQRProducto
+        mostrar={mostrarModalQR}
+        onHide={() => setMostrarModalQR(false)}
+        producto={productoQR}
       />
 
       <NotificacionOperacion

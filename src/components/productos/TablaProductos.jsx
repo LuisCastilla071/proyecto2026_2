@@ -5,7 +5,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 const TablaProductos = ({
   productos,
   abrirModalEdicion,
-  abrirModalEliminacion
+  abrirModalEliminacion, 
+  generarQRImagen
 }) => {
 
   const [loading, setLoading] = useState(true);
@@ -80,6 +81,19 @@ const TablaProductos = ({
                   >
                     <i className="bi bi-trash"></i>
                   </Button>
+
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => {
+                      generarQRImagen(producto);
+                      if (typeof setIdTarjetaActiva === 'function') setIdTarjetaActiva(null);
+                    }}
+                    title="Generar código QR de la imagen"
+                  >
+                    <i className="bi bi-qr-code"></i>
+                  </Button>
+
                 </td>
               </tr>
             ))}
