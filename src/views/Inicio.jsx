@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Container, Row, Col, Card, Spinner, Form, Button } from "react-bootstrap";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -6,9 +6,15 @@ import {
 } from "recharts";
 import { supabase } from "../database/supabaseconfig";
 import * as XLSX from 'xlsx';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 
 export default function Inicio() {
-  // 3. Variables de estado
+
+  const graficoHoraRef = useRef(null);
+  const graficoCategoriaRef = useRef(null);
+  const graficoGeneralRef = useRef(null);
   const [cargando, setCargando] = useState(true);
   const [fechaDesde, setFechaDesde] = useState(
     new Date().toLocaleDateString("en-CA", { timeZone: "America/Managua" })
@@ -35,7 +41,151 @@ export default function Inicio() {
     cargarDatos(fechaDesde, fechaHasta);
   }, [fechaDesde, fechaHasta]);
 
-  // 5. Método para la carga de datos desde Supabase
+  const generarPdfVentasHora = async () => {
+    try {
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      // Título y Periodo
+      pdf.setFontSize(18);
+      pdf.setTextColor("#330775");
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Reporte de Ventas por Hora", 14, 15);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor("#000000");
+      pdf.text(`Periodo: ${fechaDesde} - ${fechaHasta}`, 14, 22);
+
+      // Captura del gráfico (usa la referencia definida)
+      const canvas = await html2canvas(graficoHoraRef.current);
+      const imagen = canvas.toDataURL("image/png");
+      pdf.addImage(imagen, "PNG", 18, 30, 196, 80);
+
+      // Resumen General
+      pdf.setFontSize(14);
+      pdf.setTextColor("#330775");
+      pdf.text("Resumen General", 14, 120);
+      pdf.setFontSize(10);
+      pdf.setTextColor("#000000");
+      pdf.text(`Total Ventas: C$ ${estadisticas.totalVentas.toFixed(2)}`, 14, 130);
+      pdf.text(`Ventas Efectivo: C$ ${estadisticas.ventasEfectivo.toFixed(2)}`, 14, 135);
+      pdf.text(`Ventas Tarjeta: C$ ${estadisticas.ventasTarjeta.toFixed(2)}`, 14, 140);
+      pdf.text(`Productos Vendidos: ${estadisticas.productosVendidos}`, 14, 145);
+
+      // Tabla
+      autoTable(pdf, {
+        startY: 155,
+        head: [["Hora", "Monto Acumulado"]],
+        body: estadisticas.ventasPorHora.map(item => [item.hora, `C$ ${item.total}`])
+      });
+
+      const fechaActual = new Date().toLocaleDateString("en-CA", { timeZone: "America/Managua" });
+      pdf.save(`VentasHora_${fechaDesde}_${fechaHasta}_Generado_${fechaActual}.pdf`);
+    } catch (error) {
+      console.error(error);
+      alert("Error generando PDF");
+    }
+  };
+
+  const generarPdfVentasCategoria = async () => {
+    try {
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      // Título y Periodo
+      pdf.setFontSize(18);
+      pdf.setTextColor("#330775");
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Reporte de Ventas por Hora", 14, 15);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor("#000000");
+      pdf.text(`Periodo: ${fechaDesde} - ${fechaHasta}`, 14, 22);
+
+      // Captura del gráfico (usa la referencia definida)
+      const canvas = await html2canvas(graficoCategoriaRef.current);
+      const imagen = canvas.toDataURL("image/png");
+      pdf.addImage(imagen, "PNG", 18, 30, 80, 80);
+
+      // Resumen General
+      pdf.setFontSize(14);
+      pdf.setTextColor("#330775");
+      pdf.text("Resumen General", 14, 120);
+      pdf.setFontSize(10);
+      pdf.setTextColor("#000000");
+      pdf.text(`Total Ventas: C$ ${estadisticas.totalVentas.toFixed(2)}`, 14, 130);
+      pdf.text(`Ventas Efectivo: C$ ${estadisticas.ventasEfectivo.toFixed(2)}`, 14, 135);
+      pdf.text(`Ventas Tarjeta: C$ ${estadisticas.ventasTarjeta.toFixed(2)}`, 14, 140);
+      pdf.text(`Productos Vendidos: ${estadisticas.productosVendidos}`, 14, 145);
+
+      // Tabla
+      autoTable(pdf, {
+        startY: 155,
+        head: [["Hora", "Monto Acumulado"]],
+        body: estadisticas.ventasPorHora.map(item => [item.hora, `C$ ${item.total}`])
+      });
+
+      const fechaActual = new Date().toLocaleDateString("en-CA", { timeZone: "America/Managua" });
+      pdf.save(`VentasHora_${fechaDesde}_${fechaHasta}_Generado_${fechaActual}.pdf`);
+    } catch (error) {
+      console.error(error);
+      alert("Error generando PDF");
+    }
+  };
+
+  const generarPdfResumenGeneral = async () => {
+    if (!graficoHoraRef.current || !graficoCategoriaRef.current) {
+      alert("Los gráficos aún no están cargados.");
+      return;
+    }
+
+    try {
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      // Título
+      pdf.setFontSize(18);
+      pdf.setTextColor("#330775");
+      pdf.text("Reporte Estadístico General", 14, 15);
+
+      // 1. Gráfico de Horas (Más grande)
+      const canvasHora = await html2canvas(graficoHoraRef.current, { scale: 2 });
+      const imgHora = canvasHora.toDataURL("image/png");
+      pdf.text("Ventas por Hora", 14, 25);
+      // Ajuste: Mayor altura (80mm) para que el gráfico respire
+      pdf.addImage(imgHora, "PNG", 10, 30, 190, 80);
+
+      // 2. Gráfico de Categorías (Circular/Dona)
+      const canvasCat = await html2canvas(graficoCategoriaRef.current, { scale: 2 });
+      const imgCat = canvasCat.toDataURL("image/png");
+      pdf.text("Ventas por Categoría", 14, 120);
+
+      // AJUSTE CLAVE: Para que no se vea aplanado, 
+      // mantenemos un ancho y alto similares (ej. 90x90mm o 100x100mm)
+      // Esto fuerza una relación de aspecto cuadrada.
+      pdf.addImage(imgCat, "PNG", 55, 125, 100, 100);
+
+      // 3. Tabla Resumen (En nueva página)
+      pdf.addPage();
+      pdf.setFontSize(16);
+      pdf.text("Resumen de Estadísticas", 14, 20);
+
+      autoTable(pdf, {
+        startY: 30,
+        head: [["Métrica", "Valor"]],
+        body: [
+          ["Total Ventas", `C$ ${estadisticas.totalVentas.toFixed(2)}`],
+          ["Ventas Efectivo", `C$ ${estadisticas.ventasEfectivo.toFixed(2)}`],
+          ["Ventas Tarjeta", `C$ ${estadisticas.ventasTarjeta.toFixed(2)}`],
+          ["Productos Vendidos", estadisticas.productosVendidos.toString()],
+          ["Cantidad de Ventas", estadisticas.cantidadVentas.toString()]
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [51, 7, 117] }
+      });
+
+      pdf.save(`Reporte_General_${fechaDesde}_${fechaHasta}.pdf`);
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      alert("Error al generar el reporte.");
+    }
+  };
+
   const cargarDatos = async (desde, hasta) => {
     try {
       setCargando(true);
@@ -238,10 +388,15 @@ export default function Inicio() {
             />
           </Form.Group>
         </Col>
-        <Col md={3} className="d-flex align-items-end">
+        <Col md={6} className="d-flex align-items-end gap-2">
           <Button variant="success" onClick={descargarExcel}>
             <i className="bi bi-file-earmark-excel me-2"></i>
             Descargar Excel
+          </Button>
+
+          <Button variant="outline-danger" onClick={generarPdfResumenGeneral}>
+            <i className="bi bi-file-earmark-pdf me-2"></i>
+            Descargar PDF
           </Button>
         </Col>
       </Row>
@@ -286,7 +441,7 @@ export default function Inicio() {
       <Row className="g-4">
         <Col lg={8}>
           <Card className="shadow border-0">
-            <Card.Body>
+            <Card.Body ref={graficoHoraRef}>
               <h5 className="mb-3">Ventas por Hora</h5>
               <ResponsiveContainer width="100%" height={360}>
                 <LineChart data={estadisticas.ventasPorHora}>
@@ -298,12 +453,18 @@ export default function Inicio() {
                 </LineChart>
               </ResponsiveContainer>
             </Card.Body>
+            <div className="p-3 text-center">
+              <Button variant="outline-danger" onClick={generarPdfVentasHora}>
+                <i className="bi bi-file-earmark-pdf me-2"></i>
+                Descargar PDF
+              </Button>
+            </div>
           </Card>
         </Col>
 
         <Col lg={4}>
           <Card className="shadow border-0">
-            <Card.Body>
+            <Card.Body ref={graficoCategoriaRef}>
               <h5 className="mb-3">Ventas por Categoría</h5>
               <ResponsiveContainer width="100%" height={360}>
                 <PieChart>
@@ -325,6 +486,12 @@ export default function Inicio() {
                 </PieChart>
               </ResponsiveContainer>
             </Card.Body>
+            <div className="p-3 text-center">
+              <Button variant="outline-danger" onClick={generarPdfVentasCategoria}>
+                <i className="bi bi-file-earmark-pdf me-2"></i>
+                Descargar PDF
+              </Button>
+            </div>
           </Card>
         </Col>
       </Row>
